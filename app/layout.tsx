@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 export const metadata = {
   title: "Weather App",
   description: "A modern weather app with animated background",
-    generator: 'v0.dev'
+  
 }
 
 export default function RootLayout({
