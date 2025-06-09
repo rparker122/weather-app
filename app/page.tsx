@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
@@ -14,7 +12,7 @@ import AnimatedBackground from "@/components/animated-background"
 export default function WeatherApp() {
   const [city, setCity] = useState("London")
   const [searchQuery, setSearchQuery] = useState("")
-  const [weatherData, setWeatherData] = useState(null)
+  const [weatherData, setWeatherData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [isFahrenheit, setIsFahrenheit] = useState(false)
@@ -29,15 +27,12 @@ export default function WeatherApp() {
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}&units=${units}`,
       )
-
-      if (!response.ok) {
-        throw new Error("City not found")
-      }
-
+      if (!response.ok) throw new Error("City not found")
       const data = await response.json()
       setWeatherData(data)
     } catch (err) {
       setError("Failed to fetch weather data. Please try another city.")
+      setWeatherData(null)
       console.error(err)
     } finally {
       setLoading(false)
@@ -46,14 +41,10 @@ export default function WeatherApp() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    if (searchQuery.trim()) {
-      setCity(searchQuery)
-    }
+    if (searchQuery.trim()) setCity(searchQuery.trim())
   }
 
-  const toggleTemperatureUnit = () => {
-    setIsFahrenheit(!isFahrenheit)
-  }
+  const toggleTemperatureUnit = () => setIsFahrenheit((prev) => !prev)
 
   useEffect(() => {
     fetchWeatherData(city)
@@ -61,10 +52,13 @@ export default function WeatherApp() {
 
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
+      {/* Pass actual weather condition string to AnimatedBackground */}
       <AnimatedBackground weatherCondition={weatherData?.weather?.[0]?.main} />
 
       <div className="relative z-10 container mx-auto px-4 py-8 flex flex-col items-center">
-        <h1 className="text-4xl font-bold text-white mb-8 mt-10 text-center drop-shadow-lg">Weather Forecast</h1>
+        <h1 className="text-4xl font-bold text-white mb-8 mt-10 text-center drop-shadow-lg">
+          Weather Forecast
+        </h1>
 
         <form onSubmit={handleSearch} className="w-full max-w-md mb-4 flex gap-2">
           <Input
@@ -106,4 +100,3 @@ export default function WeatherApp() {
     </main>
   )
 }
-
